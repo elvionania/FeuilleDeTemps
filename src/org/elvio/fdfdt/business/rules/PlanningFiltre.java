@@ -14,7 +14,6 @@ import org.elvio.fdfdt.file.conf.meta.row.ConfRow;
 
 public class PlanningFiltre implements Filter {
 
-	@Override
 	public Information applyFilter(Information configuration) {
 		Information info = new Information();
 

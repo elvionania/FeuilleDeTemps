@@ -18,7 +18,6 @@ public class ConfDateCell extends ConfCell<Date> {
 	public ConfDateCell() {
 	}
 
-	@Override
 	public void process(HSSFCell xslCell) {
 		if(getValue() != null){
 			CellFormatUtilities.getXlsTimeValue(xslCell, getValue());

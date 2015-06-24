@@ -1,4 +1,4 @@
-package elvio.fdfdt;
+package test.java.elvio.fdfdt;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

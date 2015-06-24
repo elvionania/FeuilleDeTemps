@@ -21,7 +21,6 @@ public class ConfStringCell extends ConfCell<String> {
 		return (String) value;
 	}
 
-	@Override
 	public void process(HSSFCell xslCell) {
 		xslCell.setCellType(Cell.CELL_TYPE_STRING);
 		xslCell.setCellValue(getValue());

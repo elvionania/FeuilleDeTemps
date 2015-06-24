@@ -16,7 +16,6 @@ public class ConfFormulaDateCell extends ConfCell<String> {
 		return (String) value;
 	}
 	
-	@Override
 	public void process(HSSFCell xslCell) {
 		
 		CellStyle style = xslCell.getRow().getSheet().getWorkbook().createCellStyle();

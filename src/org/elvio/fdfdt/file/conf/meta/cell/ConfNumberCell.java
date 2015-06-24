@@ -32,7 +32,6 @@ public class ConfNumberCell extends ConfCell<Double> {
 		}
 	}
 	
-	@Override
 	public void process(HSSFCell xslCell) {
 		if(getValue() != null){
 			xslCell.setCellType(Cell.CELL_TYPE_NUMERIC);
