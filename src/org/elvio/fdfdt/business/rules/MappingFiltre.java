@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import org.apache.poi.ss.usermodel.Row;
 import org.elvio.fdfdt.business.process.FilterFactory;
 import org.elvio.fdfdt.file.conf.FinalConfiguration;
 import org.elvio.fdfdt.file.conf.HoraireConfiguration;
@@ -53,16 +52,14 @@ public class MappingFiltre implements Filter {
 
 	private void doFooter(FinalConfiguration config) {
 		StringBuilder formulaAmount = new StringBuilder();
-		for(ConfRow row : config.getRows()){
-			if(row.isBody()){
-				formulaAmount.append(row.getCell(11));
-				formulaAmount.append("+");
-			}
+		for(ConfRow row : config.getRows(BodyRow.class)){
+			formulaAmount.append(row.getCell(11));
+			formulaAmount.append("+");
 		}
+
 		// remove last "+"
 		String amount = formulaAmount.substring(0, formulaAmount.length()-2);
 		
-		changer config pour avoir des accesseur getHeader, getBody et getFooter
 		
 		
 	}
@@ -70,7 +67,7 @@ public class MappingFiltre implements Filter {
 	private ClassConfiguration mapping(Entry<String, ClassConfiguration> employee) {
 
 		FinalConfiguration config = new FinalConfiguration();
-		BodyRow outputRow = (BodyRow) config.getConfiguration().get(1);
+		BodyRow outputRow = config.getBodyRowModel();
 		Map<String, List<ConfRow>> rowByDate = new TreeMap<String, List<ConfRow>>();
 		String dayForRow = "";
 

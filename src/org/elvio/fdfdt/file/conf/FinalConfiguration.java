@@ -100,7 +100,7 @@ public class FinalConfiguration extends ClassConfiguration {
 		rows.addConfCell(new ConfStringCell());
 		rows.addConfCell(new ConfStringCell());
 		rows.addConfCell(new ConfStringCell());
-		rows.addConfCell(new ConfStringCell());
+		rows.addConfCell(new ConfStringCell("total"));
 		rows.addConfCell(new ConfStringCell());
 		
 		configuration.add(footer);

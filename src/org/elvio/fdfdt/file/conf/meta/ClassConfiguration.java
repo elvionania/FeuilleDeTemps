@@ -16,33 +16,35 @@ public abstract class ClassConfiguration {
 		super();
 	}
 
-//	public void process(List<List<String>> data) {
-//
-//		BodyRow iterativeRow;
-//		ConfRow currentRow;
-//		for (int i = 0; i < data.size(); i++) {
-//
-//			if (isHeader(i)) {
-//				currentRow = configuration.get(i);
-//				for (int j = 0; j < data.get(i).size(); j++) {
-//					currentRow.getCell(j).extract(data.get(i).get(j));
-//				}
-//			} else if (isBody(i)) {
-//				iterativeRow = ((BodyRow) configuration.get(configuration.size() - 1));
-//				iterativeRow.addNewRow();
-//				currentRow = iterativeRow.getCurrentRow();
-//				for (int j = 0; j < data.get(i).size(); j++) {
-//					currentRow.getCell(j).extract(data.get(i).get(j));
-//				}
-//			}
-//		}
-//	}
-	
-	public ConfRow get(int index){
+	public BodyRow getBodyRowModel() {
+
+		for (ConfRow row : configuration) {
+			if (row instanceof BodyRow) {
+				return (BodyRow) row;
+			}
+		}
+
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends ConfRow> List<T> getRows(Class<T> type){
+		List<T> rows = new ArrayList<T>();
+		
+		for (ConfRow row : configuration) {
+			if (row.getClass().getName().equals(type.getClass().getName())) {
+				rows.add((T) row);
+			}
+		}
+
+		return rows;
+	}
+
+	public ConfRow get(int index) {
 		return configuration.get(index);
 	}
-	
-	public int size(){
+
+	public int size() {
 		return configuration.size();
 	}
 
