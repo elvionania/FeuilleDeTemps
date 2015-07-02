@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>elvio</groupId>
-	<artifactId>fdfdt</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>FeuilleDeTemps</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>fdfdt</name>
+	<name>FeuilleDeTemps</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
