@@ -60,7 +60,6 @@ public class IoXsl {
 			for (Map.Entry<String, ClassConfiguration> entry : configOut.getConfigurations().entrySet()) {
 				produceSheet(workbook.createSheet(entry.getKey()), entry.getValue());
 			}
-			
 			produceSummarySheet(workbook);
 
 			workbook.write(file);
@@ -93,9 +92,15 @@ public class IoXsl {
 			
 	        xlsCellValue.setCellStyle(style);
 	        xlsCellValue.setCellType(Cell.CELL_TYPE_NUMERIC);
-	        String name = "'"+workbook.getSheetAt(i).getSheetName()+"'!L12";
+	        int ligne = getLastPositionInLColumn(workbook.getSheetAt(i));
+	        String name = "'"+workbook.getSheetAt(i).getSheetName()+"'!L"+ligne;
 	        xlsCellValue.setCellFormula(name);			
 		}
+	}
+
+	private static int getLastPositionInLColumn(HSSFSheet sheetAt) {
+		int result = sheetAt.getLastRowNum();
+		return result+1;
 	}
 
 	private static void produceSheet(HSSFSheet worksheet, ClassConfiguration configOut) {

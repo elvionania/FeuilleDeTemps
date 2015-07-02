@@ -1,5 +1,6 @@
 package org.elvio.fdfdt.file.conf.meta.row;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.elvio.fdfdt.file.conf.meta.cell.Cell;
@@ -18,20 +19,19 @@ public class FooterRow extends ConfRow {
 
 	@Override
 	public int getCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 1;
 	}
 
 	@Override
 	public List<ConfRow> getRows() {
-		// TODO Auto-generated method stub
-		return null;
+		List<ConfRow> rows = new ArrayList<ConfRow>();
+		rows.add(this);
+		return rows;
 	}
 
 	@Override
 	public ConfRow getCurrentRow() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 }

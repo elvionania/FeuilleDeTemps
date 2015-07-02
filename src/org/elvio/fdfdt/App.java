@@ -23,24 +23,31 @@ public class App
 
 	public static void main( String[] args )
     {
+		System.out.println("début du traitement des données");
         Information employeesInfo = new Information();
         Information employeesHoraires = new Information();
         
+        System.out.println("initialisation des operations");
         List<String> dataFilters = new ArrayList<String>();
         dataFilters.add(EMPLOYEE);
         dataFilters.add(MAPPING);
-
+        
         List<String> planningFilters = new ArrayList<String>();
         planningFilters.add(PLANNING);
         
         employeesInfo.add(FdtConfiguration.class.getName(), new FdtConfiguration());
+        System.out.println("extraction des horaires");
         Transformateur.extractData(employeesInfo, FdtConfiguration.class.getName(), IoXsl.importXsl(SRC_FILE));
-        
+        System.out.println("extraction des planning");
         employeesHoraires.add(HoraireConfiguration.class.getName(), new HoraireConfiguration());
         Transformateur.extractData(employeesHoraires, HoraireConfiguration.class.getName(), IoXsl.importXsl(CFG_FILE));
         
         employeesInfo.addDependancy(PLANNING, employeesHoraires);
         
-        IoXsl.exportXsl(FILE_NAME,FILE_EXTENSION, Transformateur.processData(employeesInfo, dataFilters));
+        System.out.println("conversion des données");
+        Information resultat = Transformateur.processData(employeesInfo, dataFilters);
+        System.out.println("production du fichier final");
+        IoXsl.exportXsl(FILE_NAME,FILE_EXTENSION, resultat);
+        System.out.println("fin du traitement des données");
     }
 }

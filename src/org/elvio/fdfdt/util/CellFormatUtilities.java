@@ -14,13 +14,35 @@ import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 
 public class CellFormatUtilities {
+	
+	private static CellStyle timeStyle = null; 
+	private static CellStyle dateStyle = null;
+	
+	public static void getXlsDateValue(HSSFCell cell, Date cellValue) {
+		HSSFWorkbook wb = cell.getSheet().getWorkbook();
+		initDateStyle(wb);	
+		cell.setCellStyle(dateStyle);
+		cell.setCellValue(cellValue);
+		
+//		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+//
+//		Calendar calendar = GregorianCalendar.getInstance();
+//		calendar.setTime((Date) cellValue);
+//		String formula = "TIME(" + calendar.get(Calendar.HOUR_OF_DAY) + "," + calendar.get(Calendar.MINUTE) + ","
+//				+ calendar.get(Calendar.SECOND) + ")";
+//
+//		cell.setCellFormula(formula);
+//		cell.setCellType(Cell.CELL_TYPE_FORMULA);
+//		cell.setCellStyle(timeStyle);
+//		evaluator.evaluateFormulaCell(cell);
+		
+	}
 
 	public static void getXlsTimeValue(HSSFCell cell, Object cellValue) {
 		HSSFWorkbook wb = cell.getSheet().getWorkbook();
-		CellStyle style = wb.createCellStyle();
-		DataFormat df = wb.createDataFormat();
+		initTimeStyle(wb);	
+		
 		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-		style.setDataFormat(df.getFormat("[h]:mm:ss;@"));
 
 		Calendar calendar = GregorianCalendar.getInstance();
 		calendar.setTime((Date) cellValue);
@@ -29,9 +51,25 @@ public class CellFormatUtilities {
 
 		cell.setCellFormula(formula);
 		cell.setCellType(Cell.CELL_TYPE_FORMULA);
-		cell.setCellStyle(style);
+		cell.setCellStyle(timeStyle);
 		evaluator.evaluateFormulaCell(cell);
 
+	}
+
+	private static void initDateStyle(HSSFWorkbook wb) {
+		if(dateStyle == null){
+			dateStyle = wb.createCellStyle();
+			DataFormat df = wb.createDataFormat();
+			dateStyle.setDataFormat(df.getFormat("d-mmm-yy;@"));
+		}
+	}
+	
+	private static void initTimeStyle(HSSFWorkbook wb) {
+		if(timeStyle == null){
+			timeStyle = wb.createCellStyle();
+			DataFormat df = wb.createDataFormat();
+			timeStyle.setDataFormat(df.getFormat("[h]:mm:ss;@"));
+		}
 	}
 
 	public static String convertColumnIndex(int index) {

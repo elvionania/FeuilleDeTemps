@@ -1,6 +1,7 @@
 package org.elvio.fdfdt.file.conf.meta;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.elvio.fdfdt.file.conf.meta.cell.Cell;
@@ -32,8 +33,8 @@ public abstract class ClassConfiguration {
 		List<T> rows = new ArrayList<T>();
 		
 		for (ConfRow row : configuration) {
-			if (row.getClass().getName().equals(type.getClass().getName())) {
-				rows.add((T) row);
+			if (row.getClass().getName().equals(type.getName())) {
+				rows.addAll((Collection<T>) row.getRows());
 			}
 		}
 

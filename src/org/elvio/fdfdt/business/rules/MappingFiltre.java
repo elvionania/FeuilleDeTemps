@@ -15,11 +15,12 @@ import org.elvio.fdfdt.file.conf.HoraireConfiguration;
 import org.elvio.fdfdt.file.conf.meta.ClassConfiguration;
 import org.elvio.fdfdt.file.conf.meta.Information;
 import org.elvio.fdfdt.file.conf.meta.cell.Cell;
-import org.elvio.fdfdt.file.conf.meta.cell.ConfDateCell;
+import org.elvio.fdfdt.file.conf.meta.cell.ConfTimeCell;
 import org.elvio.fdfdt.file.conf.meta.cell.ConfNumberCell;
 import org.elvio.fdfdt.file.conf.meta.cell.ConfStringCell;
 import org.elvio.fdfdt.file.conf.meta.row.BodyRow;
 import org.elvio.fdfdt.file.conf.meta.row.ConfRow;
+import org.elvio.fdfdt.file.conf.meta.row.FooterRow;
 import org.elvio.fdfdt.util.CellFormatUtilities;
 
 public class MappingFiltre implements Filter {
@@ -52,24 +53,28 @@ public class MappingFiltre implements Filter {
 
 	private void doFooter(FinalConfiguration config) {
 		StringBuilder formulaAmount = new StringBuilder();
-		for(ConfRow row : config.getRows(BodyRow.class)){
-			formulaAmount.append(row.getCell(11));
+		for(int i = 2 ; i <= config.getRows(BodyRow.class).size()+1 ; i++){
+			formulaAmount.append("L"+i);
 			formulaAmount.append("+");
 		}
-
-		// remove last "+"
-		String amount = formulaAmount.substring(0, formulaAmount.length()-2);
 		
+		String amount = "";
 		
+		if(formulaAmount.toString().endsWith("+")){
+			amount = formulaAmount.toString().substring(0, formulaAmount.toString().lastIndexOf("+"));
+		}else{
+			amount = formulaAmount.toString();
+		}
 		
+		config.getRows(FooterRow.class).get(0).setCellValue(11, amount);
 	}
 
 	private ClassConfiguration mapping(Entry<String, ClassConfiguration> employee) {
 
 		FinalConfiguration config = new FinalConfiguration();
 		BodyRow outputRow = config.getBodyRowModel();
-		Map<String, List<ConfRow>> rowByDate = new TreeMap<String, List<ConfRow>>();
-		String dayForRow = "";
+		Map<Date, List<ConfRow>> rowByDate = new TreeMap<Date, List<ConfRow>>();
+		Date dayForRow = null;
 
 		for (ConfRow inputRow : employee.getValue().getRows()) {
 			dayForRow = getDay(inputRow);
@@ -81,7 +86,7 @@ public class MappingFiltre implements Filter {
 			rowsForDate.add(inputRow.getCurrentRow());
 		}
 
-		for (Entry<String, List<ConfRow>> rowEntry : rowByDate.entrySet()) {
+		for (Entry<Date, List<ConfRow>> rowEntry : rowByDate.entrySet()) {
 			((BodyRow) outputRow).addNewRow();
 
 			outputRow.setCellValue(0, rowEntry.getKey());
@@ -137,8 +142,8 @@ public class MappingFiltre implements Filter {
 	}
 
 	private Date getLate(ConfRow outputRow) {
-		double realStartHour = getTimeMs((ConfDateCell) outputRow.getCurrentRow().getCell(6));
-		double theoricStartSecond = getTimeMs((ConfDateCell) outputRow.getCurrentRow().getCell(5));
+		double realStartHour = getTimeMs((ConfTimeCell) outputRow.getCurrentRow().getCell(6));
+		double theoricStartSecond = getTimeMs((ConfTimeCell) outputRow.getCurrentRow().getCell(5));
 
 		// regle du quart d'heure avant
 		theoricStartSecond -= (15 * 60 * 1000);
@@ -155,7 +160,7 @@ public class MappingFiltre implements Filter {
 		}
 	}
 
-	private long getTimeMs(ConfDateCell cell) {
+	private long getTimeMs(ConfTimeCell cell) {
 		Calendar calendar = GregorianCalendar.getInstance();
 		if (cell.getValue() == null) {
 			return -1l;
@@ -172,9 +177,9 @@ public class MappingFiltre implements Filter {
 		int startHourColumn = 0;
 		int pauseColumn = 0;
 
-		long endHour = getTimeMs((ConfDateCell) outputRow.getCurrentRow().getCell(8));
+		long endHour = getTimeMs((ConfTimeCell) outputRow.getCurrentRow().getCell(8));
 		if (endHour == -1) {
-			endHour = getTimeMs((ConfDateCell) outputRow.getCurrentRow().getCell(7));
+			endHour = getTimeMs((ConfTimeCell) outputRow.getCurrentRow().getCell(7));
 			endHourColumn = 7;
 		}
 
@@ -213,22 +218,22 @@ public class MappingFiltre implements Filter {
 		}
 
 		if (value.size() == 1) {
-			hour = getHour(((ConfDateCell) value.get(0).getCell(1)));
+			hour = getHour(((ConfTimeCell) value.get(0).getCell(1)));
 			if (hour < 15) {
 				return null;
 			} else {
-				return ((ConfDateCell) value.get(0).getCell(1)).getValue();
+				return ((ConfTimeCell) value.get(0).getCell(1)).getValue();
 			}
 		}
 
 		for (ConfRow row : value) {
-			int presentHour = getHour(((ConfDateCell) row.getCell(1)));
+			int presentHour = getHour(((ConfTimeCell) row.getCell(1)));
 			if (presentHour != hour) {
 				selectedRow = row;
 			}
 		}
 
-		return ((ConfDateCell) selectedRow.getCell(1)).getValue();
+		return ((ConfTimeCell) selectedRow.getCell(1)).getValue();
 	}
 
 	private Date getFirstHour(List<ConfRow> value) {
@@ -240,16 +245,16 @@ public class MappingFiltre implements Filter {
 		}
 
 		if (value.size() == 1) {
-			hour = getHour(((ConfDateCell) value.get(0).getCell(1)));
+			hour = getHour(((ConfTimeCell) value.get(0).getCell(1)));
 			if (hour > 15) {
 				return null;
 			} else {
-				return ((ConfDateCell) value.get(0).getCell(1)).getValue();
+				return ((ConfTimeCell) value.get(0).getCell(1)).getValue();
 			}
 		}
 
 		for (ConfRow row : value) {
-			int presentHour = getHour(((ConfDateCell) row.getCell(1)));
+			int presentHour = getHour(((ConfTimeCell) row.getCell(1)));
 
 			if (hour == 0) {
 				hour = presentHour;
@@ -263,7 +268,7 @@ public class MappingFiltre implements Filter {
 		if (hour > 15) {
 			return null;
 		}
-		return ((ConfDateCell) selectedRow.getCell(1)).getValue();
+		return ((ConfTimeCell) selectedRow.getCell(1)).getValue();
 	}
 
 	private Date getDatePrevue(List<ConfRow> list, Cell date2Process) {
@@ -274,7 +279,7 @@ public class MappingFiltre implements Filter {
 			return null;
 		}
 		ConfRow row = list.get(0);
-		Date date = ((ConfDateCell) row.getCell(1)).getValue();
+		Date date = ((ConfTimeCell) row.getCell(1)).getValue();
 
 		Calendar calendar = GregorianCalendar.getInstance();
 
@@ -300,7 +305,7 @@ public class MappingFiltre implements Filter {
 		}
 
 		if (value.size() == 1) {
-			hour = getHour(((ConfDateCell) value.get(0).getCell(1)));
+			hour = getHour(((ConfTimeCell) value.get(0).getCell(1)));
 			if (hour < 15) {
 				return null;
 			} else {
@@ -309,7 +314,7 @@ public class MappingFiltre implements Filter {
 		}
 
 		for (ConfRow row : value) {
-			int presentHour = getHour(((ConfDateCell) row.getCell(1)));
+			int presentHour = getHour(((ConfTimeCell) row.getCell(1)));
 			if (presentHour != hour) {
 				selectedRow = row;
 			}
@@ -327,7 +332,7 @@ public class MappingFiltre implements Filter {
 		}
 
 		if (value.size() == 1) {
-			hour = getHour(((ConfDateCell) value.get(0).getCell(1)));
+			hour = getHour(((ConfTimeCell) value.get(0).getCell(1)));
 			if (hour > 15) {
 				return null;
 			} else {
@@ -336,7 +341,7 @@ public class MappingFiltre implements Filter {
 		}
 
 		for (ConfRow row : value) {
-			int presentHour = getHour(((ConfDateCell) row.getCell(1)));
+			int presentHour = getHour(((ConfTimeCell) row.getCell(1)));
 
 			if (hour == 0) {
 				hour = presentHour;
@@ -353,35 +358,42 @@ public class MappingFiltre implements Filter {
 		return (Double) selectedRow.getCell(0).getValue();
 	}
 
-	private String getDay(ConfRow inputRow) {
-		String resultat = "";
+	private Date getDay(ConfRow inputRow) {
+//		String resultat = "";
 		Calendar calendar = GregorianCalendar.getInstance();
-		calendar.setTime(((ConfDateCell) inputRow.getCell(1)).getValue());
-
-		int year = calendar.get(Calendar.YEAR);
-		int month = calendar.get(Calendar.MONTH);
-		int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-		resultat += year;
-		resultat += "-";
-
-		month++;
-		if (month < 10) {
-			resultat += "0" + month + "-";
-		} else {
-			resultat += month + "-";
-		}
-
-		if (day < 10) {
-			resultat += "0" + day;
-		} else {
-			resultat += day;
-		}
-
-		return resultat;
+		calendar.setTime(((ConfTimeCell) inputRow.getCell(1)).getValue());
+		
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		
+		return calendar.getTime();
+		
+		
+//		int year = calendar.get(Calendar.YEAR);
+//		int month = calendar.get(Calendar.MONTH);
+//		int day = calendar.get(Calendar.DAY_OF_MONTH);
+//
+//		resultat += year;
+//		resultat += "-";
+//
+//		month++;
+//		if (month < 10) {
+//			resultat += "0" + month + "-";
+//		} else {
+//			resultat += month + "-";
+//		}
+//
+//		if (day < 10) {
+//			resultat += "0" + day;
+//		} else {
+//			resultat += day;
+//		}
+//
+//		return resultat;
 	}
 
-	private int getHour(ConfDateCell cell) {
+	private int getHour(ConfTimeCell cell) {
 		Calendar calendar = GregorianCalendar.getInstance();
 		if (cell.getValue() == null) {
 			return -1;

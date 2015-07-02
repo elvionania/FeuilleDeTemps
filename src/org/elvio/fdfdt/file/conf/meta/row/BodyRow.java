@@ -8,6 +8,7 @@ import org.elvio.fdfdt.file.conf.meta.cell.ConfDateCell;
 import org.elvio.fdfdt.file.conf.meta.cell.ConfFormulaDateCell;
 import org.elvio.fdfdt.file.conf.meta.cell.ConfNumberCell;
 import org.elvio.fdfdt.file.conf.meta.cell.ConfStringCell;
+import org.elvio.fdfdt.file.conf.meta.cell.ConfTimeCell;
 
 public class BodyRow extends ConfRow {
 
@@ -23,12 +24,14 @@ public class BodyRow extends ConfRow {
 		for (Cell cell : this.getCells()) {
 			if (cell instanceof ConfStringCell) {
 				currentRow.addConfCell(new ConfStringCell(cell.getName()));
-			} else if (cell instanceof ConfDateCell) {
-				currentRow.addConfCell(new ConfDateCell(cell.getName()));
+			} else if (cell instanceof ConfTimeCell) {
+				currentRow.addConfCell(new ConfTimeCell(cell.getName()));
 			} else if (cell instanceof ConfNumberCell) {
 				currentRow.addConfCell(new ConfNumberCell(cell.getName()));
 			} else if (cell instanceof ConfFormulaDateCell) {
 				currentRow.addConfCell(new ConfFormulaDateCell(cell.getName()));
+			} else if (cell instanceof ConfDateCell) {
+				currentRow.addConfCell(new ConfDateCell(cell.getName()));
 			}
 		}
 		rows.add(currentRow);

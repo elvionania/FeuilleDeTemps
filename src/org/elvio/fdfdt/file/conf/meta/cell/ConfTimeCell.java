@@ -7,20 +7,20 @@ import java.util.Date;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.elvio.fdfdt.util.CellFormatUtilities;
 
-public class ConfDateCell extends ConfCell<Date> {
+public class ConfTimeCell extends ConfCell<Date> {
 
 	private SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	public ConfDateCell(String name) {
+	public ConfTimeCell(String name) {
 		this.name = name;
 	}
 
-	public ConfDateCell() {
+	public ConfTimeCell() {
 	}
 
 	public void process(HSSFCell xslCell) {
 		if(getValue() != null){
-			CellFormatUtilities.getXlsDateValue(xslCell, getValue());
+			CellFormatUtilities.getXlsTimeValue(xslCell, getValue());
 		}
 	}
 

@@ -7,6 +7,7 @@ import org.elvio.fdfdt.file.conf.meta.cell.ConfDateCell;
 import org.elvio.fdfdt.file.conf.meta.cell.ConfFormulaDateCell;
 import org.elvio.fdfdt.file.conf.meta.cell.ConfNumberCell;
 import org.elvio.fdfdt.file.conf.meta.cell.ConfStringCell;
+import org.elvio.fdfdt.file.conf.meta.cell.ConfTimeCell;
 import org.elvio.fdfdt.file.conf.meta.row.BodyRow;
 import org.elvio.fdfdt.file.conf.meta.row.ConfRow;
 import org.elvio.fdfdt.file.conf.meta.row.FooterRow;
@@ -35,6 +36,7 @@ public class FinalConfiguration extends ClassConfiguration {
 	public static final String SEQUENCE_FIN = "sequence Fin";
 	public static final String SEQUENCE_DEBUT = "sequence Debut";
 	public static final String DATE = "date";
+	public static final String TOTAL = "total";
 
 	public FinalConfiguration(){
 		configuration = new ArrayList<ConfRow>();
@@ -64,17 +66,17 @@ public class FinalConfiguration extends ClassConfiguration {
 		configuration.add(row0);
 		
 		BodyRow rows = new BodyRow();
-		rows.addConfCell(new ConfStringCell(DATE));
+		rows.addConfCell(new ConfDateCell(DATE));
 		rows.addConfCell(new ConfNumberCell(SEQUENCE_DEBUT));
 		rows.addConfCell(new ConfNumberCell(SEQUENCE_FIN));
 		rows.addConfCell(new ConfStringCell(NUMERO_DE_CARTE));
 		rows.addConfCell(new ConfStringCell(NOM_DE_L_EDUCATRICE));
-		rows.addConfCell(new ConfDateCell(HEURE_PREVUE_DE_DEBUT));
-		rows.addConfCell(new ConfDateCell(HEURE_REELLE_DE_DEBUT));
-		rows.addConfCell(new ConfDateCell(HEURE_PREVUE_DE_FIN));
-		rows.addConfCell(new ConfDateCell(HEURE_REELLE_DE_FIN));
-		rows.addConfCell(new ConfDateCell(DUREE_DE_PAUSE_PREVUE));
-		rows.addConfCell(new ConfDateCell(DUREE_DE_PAUSE_REELLE));
+		rows.addConfCell(new ConfTimeCell(HEURE_PREVUE_DE_DEBUT));
+		rows.addConfCell(new ConfTimeCell(HEURE_REELLE_DE_DEBUT));
+		rows.addConfCell(new ConfTimeCell(HEURE_PREVUE_DE_FIN));
+		rows.addConfCell(new ConfTimeCell(HEURE_REELLE_DE_FIN));
+		rows.addConfCell(new ConfTimeCell(DUREE_DE_PAUSE_PREVUE));
+		rows.addConfCell(new ConfTimeCell(DUREE_DE_PAUSE_REELLE));
 		rows.addConfCell(new ConfFormulaDateCell(DIFFERENCE));
 		rows.addConfCell(new ConfNumberCell(TOTAL_SEMAINE_1));
 		rows.addConfCell(new ConfNumberCell(TOTAL_SEMAINE_2));
@@ -84,24 +86,24 @@ public class FinalConfiguration extends ClassConfiguration {
 		rows.addConfCell(new ConfNumberCell(ANCIEN_CREDIT_BANQUE));
 		rows.addConfCell(new ConfNumberCell(NOUVEAU_CREDIT_BANQUE));
 		rows.addConfCell(new ConfNumberCell(TOTAL_A_PAYER));
-		rows.addConfCell(new ConfDateCell(RETARD));
+		rows.addConfCell(new ConfTimeCell(RETARD));
 		
 		configuration.add(rows);
 		
 		FooterRow footer = new FooterRow();
-		rows.addConfCell(new ConfStringCell());
-		rows.addConfCell(new ConfStringCell());
-		rows.addConfCell(new ConfStringCell());
-		rows.addConfCell(new ConfStringCell());
-		rows.addConfCell(new ConfStringCell());
-		rows.addConfCell(new ConfStringCell());
-		rows.addConfCell(new ConfStringCell());
-		rows.addConfCell(new ConfStringCell());
-		rows.addConfCell(new ConfStringCell());
-		rows.addConfCell(new ConfStringCell());
-		rows.addConfCell(new ConfStringCell());
-		rows.addConfCell(new ConfStringCell("total"));
-		rows.addConfCell(new ConfStringCell());
+		footer.addConfCell(new ConfStringCell());
+		footer.addConfCell(new ConfStringCell());
+		footer.addConfCell(new ConfStringCell());
+		footer.addConfCell(new ConfStringCell());
+		footer.addConfCell(new ConfStringCell());
+		footer.addConfCell(new ConfStringCell());
+		footer.addConfCell(new ConfStringCell());
+		footer.addConfCell(new ConfStringCell());
+		footer.addConfCell(new ConfStringCell());
+		footer.addConfCell(new ConfStringCell());
+		footer.addConfCell(new ConfStringCell());
+		footer.addConfCell(new ConfFormulaDateCell(TOTAL));
+		footer.addConfCell(new ConfStringCell());
 		
 		configuration.add(footer);
 	}

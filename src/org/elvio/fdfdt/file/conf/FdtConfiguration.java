@@ -3,7 +3,7 @@ package org.elvio.fdfdt.file.conf;
 import java.util.ArrayList;
 
 import org.elvio.fdfdt.file.conf.meta.ClassConfiguration;
-import org.elvio.fdfdt.file.conf.meta.cell.ConfDateCell;
+import org.elvio.fdfdt.file.conf.meta.cell.ConfTimeCell;
 import org.elvio.fdfdt.file.conf.meta.cell.ConfNumberCell;
 import org.elvio.fdfdt.file.conf.meta.cell.ConfStringCell;
 import org.elvio.fdfdt.file.conf.meta.row.BodyRow;
@@ -23,7 +23,7 @@ public class FdtConfiguration extends ClassConfiguration {
 		HeaderRow row0 = new HeaderRow();
 		row0.addConfCell(new ConfStringCell());
 		row0.addConfCell(new ConfStringCell());
-		row0.addConfCell(new ConfDateCell());
+		row0.addConfCell(new ConfTimeCell());
 		configuration.add(row0);
 
 		HeaderRow row1 = new HeaderRow();
@@ -64,7 +64,7 @@ public class FdtConfiguration extends ClassConfiguration {
 
 		BodyRow rows = new BodyRow();
 		rows.addConfCell(new ConfNumberCell());
-		rows.addConfCell(new ConfDateCell(DATE));
+		rows.addConfCell(new ConfTimeCell(DATE));
 		rows.addConfCell(new ConfStringCell());
 		rows.addConfCell(new ConfStringCell(TYPE_EVENEMENT));
 		rows.addConfCell(new ConfStringCell());
