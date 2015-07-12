@@ -4,6 +4,8 @@ import static org.elvio.fdfdt.business.process.FilterFactory.EMPLOYEE;
 import static org.elvio.fdfdt.business.process.FilterFactory.MAPPING;
 import static org.elvio.fdfdt.business.process.FilterFactory.PLANNING;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +20,7 @@ public class App
 {
     private static final String FILE_EXTENSION = "xls";
 	private static final String FILE_NAME = "resultat";
-	private static final String SRC_FILE = "paie 9 juin.xls";
+	private static final String SRC_FILE = "paie.xls";
 	private static final String CFG_FILE = "horaires.xls";
 
 	public static void main( String[] args )
@@ -26,6 +28,10 @@ public class App
 		System.out.println("début du traitement des données");
         Information employeesInfo = new Information();
         Information employeesHoraires = new Information();
+        
+        Path chemin 		= Paths.get("");
+        Path srcPath = chemin.toAbsolutePath().getParent().resolve(SRC_FILE);
+        Path cfgPath = chemin.toAbsolutePath().getParent().resolve(CFG_FILE);
         
         System.out.println("initialisation des operations");
         List<String> dataFilters = new ArrayList<String>();
@@ -37,10 +43,10 @@ public class App
         
         employeesInfo.add(FdtConfiguration.class.getName(), new FdtConfiguration());
         System.out.println("extraction des horaires");
-        Transformateur.extractData(employeesInfo, FdtConfiguration.class.getName(), IoXsl.importXsl(SRC_FILE));
+        Transformateur.extractData(employeesInfo, FdtConfiguration.class.getName(), IoXsl.importXsl(srcPath));
         System.out.println("extraction des planning");
         employeesHoraires.add(HoraireConfiguration.class.getName(), new HoraireConfiguration());
-        Transformateur.extractData(employeesHoraires, HoraireConfiguration.class.getName(), IoXsl.importXsl(CFG_FILE));
+        Transformateur.extractData(employeesHoraires, HoraireConfiguration.class.getName(), IoXsl.importXsl(cfgPath));
         
         employeesInfo.addDependancy(PLANNING, employeesHoraires);
         

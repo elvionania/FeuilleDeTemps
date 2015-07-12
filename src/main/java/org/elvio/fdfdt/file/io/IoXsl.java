@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -22,13 +23,13 @@ import org.elvio.fdfdt.util.CellFormatUtilities;
 
 public class IoXsl {
 
-	public static List<List<String>> importXsl(String absolutePath) {
+	public static List<List<String>> importXsl(Path absolutePath) {
 
 		List<List<String>> values = new ArrayList<List<String>>();
 		ArrayList<String> rowValues;
 
 		try {
-			FileInputStream fileInputStream = new FileInputStream(absolutePath);
+			FileInputStream fileInputStream = new FileInputStream(absolutePath.toFile());
 			HSSFWorkbook workbook = new HSSFWorkbook(fileInputStream);
 			HSSFSheet worksheet = workbook.getSheetAt(0);
 
