@@ -1,10 +1,10 @@
 package org.elvio.fdfdt.file.io;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -23,13 +23,13 @@ import org.elvio.fdfdt.util.CellFormatUtilities;
 
 public class IoXsl {
 
-	public static List<List<String>> importXsl(Path absolutePath) {
+	public static List<List<String>> importXsl(File file) {
 
 		List<List<String>> values = new ArrayList<List<String>>();
 		ArrayList<String> rowValues;
 
 		try {
-			FileInputStream fileInputStream = new FileInputStream(absolutePath.toFile());
+			FileInputStream fileInputStream = new FileInputStream(file);
 			HSSFWorkbook workbook = new HSSFWorkbook(fileInputStream);
 			HSSFSheet worksheet = workbook.getSheetAt(0);
 
@@ -43,8 +43,6 @@ public class IoXsl {
 				values.add(rowValues);
 			}
 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -52,17 +50,48 @@ public class IoXsl {
 		return values;
 	}
 
-	public static void exportXsl(String absolutePath, String extension, Information configOut) {
+	public static File exportXsl(String absolutePath, String extension, Information configOut) {
+
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		for (Map.Entry<String, ClassConfiguration> entry : configOut.getConfigurations().entrySet()) {
+			produceSheet(workbook.createSheet(entry.getKey()), entry.getValue());
+		}
+
+		produceSummarySheet(workbook);
+
+		if (absolutePath == null) {
+			return exportXsl(workbook);
+		} else {
+			exportXsl(workbook, absolutePath, extension);
+			return null;
+		}
+	}
+
+	private static File exportXsl(HSSFWorkbook workbook) {
 		try {
+			
+			File file = File.createTempFile("result", ".xsl");
+			FileOutputStream fos = new FileOutputStream(file);
+			
+			workbook.write(fos);
+			fos.flush();
+			fos.close();
+			
+			return file;
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+		
+		return null;
 
-			HSSFWorkbook workbook = new HSSFWorkbook();
+	}
+
+	private static void exportXsl(HSSFWorkbook workbook, String absolutePath, String extension) {
+		try {
 			FileOutputStream file = new FileOutputStream(absolutePath + "." + extension);
-
-			for (Map.Entry<String, ClassConfiguration> entry : configOut.getConfigurations().entrySet()) {
-				produceSheet(workbook.createSheet(entry.getKey()), entry.getValue());
-			}
-			produceSummarySheet(workbook);
-
 			workbook.write(file);
 			file.flush();
 			file.close();
@@ -72,6 +101,7 @@ public class IoXsl {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	private static void produceSummarySheet(HSSFWorkbook workbook) {
@@ -80,28 +110,28 @@ public class IoXsl {
 		HSSFRow xlsRow;
 		HSSFCell xlsCellName;
 		HSSFCell xlsCellValue;
-		
-		for(int i = 0 ; i < (sheetNbr-1) ; i++){
+
+		for (int i = 0; i < (sheetNbr - 1); i++) {
 			xlsRow = sheet.createRow(i);
 			xlsCellName = xlsRow.createCell(0);
 			xlsCellName.setCellValue(workbook.getSheetAt(i).getSheetName());
-			
+
 			xlsCellValue = xlsRow.createCell(1);
 			CellStyle style = xlsCellValue.getRow().getSheet().getWorkbook().createCellStyle();
-	        DataFormat df = xlsCellValue.getRow().getSheet().getWorkbook().createDataFormat();
-	        style.setDataFormat(df.getFormat("[h]:mm:ss;@"));
-			
-	        xlsCellValue.setCellStyle(style);
-	        xlsCellValue.setCellType(Cell.CELL_TYPE_NUMERIC);
-	        int ligne = getLastPositionInLColumn(workbook.getSheetAt(i));
-	        String name = "'"+workbook.getSheetAt(i).getSheetName()+"'!L"+ligne;
-	        xlsCellValue.setCellFormula(name);			
+			DataFormat df = xlsCellValue.getRow().getSheet().getWorkbook().createDataFormat();
+			style.setDataFormat(df.getFormat("[h]:mm:ss;@"));
+
+			xlsCellValue.setCellStyle(style);
+			xlsCellValue.setCellType(Cell.CELL_TYPE_NUMERIC);
+			int ligne = getLastPositionInLColumn(workbook.getSheetAt(i));
+			String name = "'" + workbook.getSheetAt(i).getSheetName() + "'!L" + ligne;
+			xlsCellValue.setCellFormula(name);
 		}
 	}
 
 	private static int getLastPositionInLColumn(HSSFSheet sheetAt) {
 		int result = sheetAt.getLastRowNum();
-		return result+1;
+		return result + 1;
 	}
 
 	private static void produceSheet(HSSFSheet worksheet, ClassConfiguration configOut) {

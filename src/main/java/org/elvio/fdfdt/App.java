@@ -4,6 +4,7 @@ import static org.elvio.fdfdt.business.process.FilterFactory.EMPLOYEE;
 import static org.elvio.fdfdt.business.process.FilterFactory.MAPPING;
 import static org.elvio.fdfdt.business.process.FilterFactory.PLANNING;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -22,16 +23,11 @@ public class App
 	private static final String FILE_NAME = "resultat";
 	private static final String SRC_FILE = "paie.xls";
 	private static final String CFG_FILE = "horaires.xls";
-
-	public static void main( String[] args )
-    {
+	
+	public static File produceResult(File cfg, File data){
 		System.out.println("début du traitement des données");
         Information employeesInfo = new Information();
         Information employeesHoraires = new Information();
-        
-        Path chemin 		= Paths.get("");
-        Path srcPath = chemin.toAbsolutePath().getParent().resolve(SRC_FILE);
-        Path cfgPath = chemin.toAbsolutePath().getParent().resolve(CFG_FILE);
         
         System.out.println("initialisation des operations");
         List<String> dataFilters = new ArrayList<String>();
@@ -43,17 +39,26 @@ public class App
         
         employeesInfo.add(FdtConfiguration.class.getName(), new FdtConfiguration());
         System.out.println("extraction des horaires");
-        Transformateur.extractData(employeesInfo, FdtConfiguration.class.getName(), IoXsl.importXsl(srcPath));
+        Transformateur.extractData(employeesInfo, FdtConfiguration.class.getName(), IoXsl.importXsl(data));
         System.out.println("extraction des planning");
         employeesHoraires.add(HoraireConfiguration.class.getName(), new HoraireConfiguration());
-        Transformateur.extractData(employeesHoraires, HoraireConfiguration.class.getName(), IoXsl.importXsl(cfgPath));
+        Transformateur.extractData(employeesHoraires, HoraireConfiguration.class.getName(), IoXsl.importXsl(cfg));
         
         employeesInfo.addDependancy(PLANNING, employeesHoraires);
         
         System.out.println("conversion des données");
         Information resultat = Transformateur.processData(employeesInfo, dataFilters);
         System.out.println("production du fichier final");
-        IoXsl.exportXsl(FILE_NAME,FILE_EXTENSION, resultat);
+        File file = IoXsl.exportXsl(FILE_NAME,FILE_EXTENSION, resultat);
         System.out.println("fin du traitement des données");
+		return file;
+	}
+
+	public static void main( String[] args ){
+		Path chemin 		= Paths.get("");
+        Path srcPath = chemin.toAbsolutePath().getParent().resolve(SRC_FILE);
+        Path cfgPath = chemin.toAbsolutePath().getParent().resolve(CFG_FILE);
+        
+		produceResult(cfgPath.toFile(), srcPath.toFile());
     }
 }
